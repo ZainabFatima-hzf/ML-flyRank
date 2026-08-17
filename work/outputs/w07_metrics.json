@@ -1,1 +1,23 @@
-
+{
+  "decision_date": "2026-03-15",
+  "window": {
+    "prior_start": "2026-02-15",
+    "next_end": "2026-04-12"
+  },
+  "queue_size": 14312,
+  "n_test_clients": 9,
+  "test_base_rate": 0.42775293460033537,
+  "ga4_coverage_pct": 43.80939072107323,
+  "precision_at_50": 0.7,
+  "precision_at_200": 0.7,
+  "auc": 0.5931574469307237,
+  "reason_code_counts": {
+    "weak_position": 6594,
+    "declining_volume": 6502,
+    "low_engagement": 835,
+    "established_cohort_risk": 359,
+    "low_ctr_well_ranked": 22
+  },
+  "reference_week4_rule_precision_at_50_mean": 0.456,
+  "reference_week4_rule_precision_at_50_std": 0.206
+}
