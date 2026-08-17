@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Can Prior Search Signals Predict Which Content Pages Will Decline Next?</title>
+<style>
+  :root {
+    --ink: #1c2230;
+    --ink-soft: #4a5266;
+    --paper: #fbfaf7;
+    --card: #ffffff;
+    --accent: #3b6ea5;
+    --accent-soft: #e8f0f8;
+    --border: #e2e0da;
+    --good: #2e7d32;
+    --bad: #c0392b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Georgia, serif;
+    line-height: 1.65;
+  }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 0 24px 100px; }
+  header.hero {
+    padding: 64px 0 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  h1 {
+    font-size: 2rem;
+    line-height: 1.25;
+    margin: 0 0 16px;
+    font-weight: 700;
+  }
+  .byline { color: var(--ink-soft); font-size: 0.95rem; margin-bottom: 4px; }
+  .byline a { color: var(--accent); }
+  .tags { margin-top: 16px; }
+  .tag {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.78rem;
+    padding: 4px 10px;
+    border-radius: 100px;
+    margin-right: 6px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  h2 {
+    font-size: 1.4rem;
+    margin-top: 56px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--ink);
+  }
+  h3 { font-size: 1.1rem; margin-top: 28px; }
+  p { margin: 0 0 16px; font-size: 1.02rem; }
+  .lede {
+    font-size: 1.12rem;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px 26px;
+    margin: 24px 0;
+  }
+  .abstract {
+    background: var(--accent-soft);
+    border: 1px solid #cfe0f0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 0.94rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  th { color: var(--ink-soft); font-weight: 600; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.03em; }
+  tr.highlight td { font-weight: 700; background: var(--accent-soft); }
+  figure { margin: 28px 0; text-align: center; }
+  figure img {
+    max-width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  figcaption {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    margin-top: 10px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  ul, ol { padding-left: 22px; }
+  li { margin-bottom: 8px; }
+  .callout {
+    border-left: 4px solid var(--accent);
+    padding: 4px 18px;
+    background: var(--accent-soft);
+    border-radius: 0 8px 8px 0;
+    margin: 20px 0;
+  }
+  .callout.warn { border-left-color: var(--bad); background: #fbebe9; }
+  code {
+    background: #eef0f3;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.88em;
+  }
+  .no-go li::marker { color: var(--bad); }
+  footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--ink-soft);
+    font-size: 0.92rem;
+  }
+  footer a { color: var(--accent); }
+  .repro {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.85rem;
+    background: #1c2230;
+    color: #e2e6ed;
+    padding: 16px 18px;
+    border-radius: 8px;
+    overflow-x: auto;
+  }
+  @media (max-width: 600px) {
+    header.hero { padding: 40px 0 24px; }
+    h1 { font-size: 1.5rem; }
+    .card { padding: 18px 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>Can Prior Search Signals Predict Which Content Pages Will Decline Next?</h1>
+  <p class="byline">Zainab Fatima · FlyRank ML Internship Capstone · August 2026</p>
+  <p class="byline"><a href="https://github.com/ZainabFatima-hzf/ML-flyRank">github.com/ZainabFatima-hzf/ML-flyRank</a></p>
+  <div class="tags">
+    <span class="tag">Classification</span>
+    <span class="tag">Client-grouped validation</span>
+    <span class="tag">Search &amp; content analytics</span>
+  </div>
+</header>
+
+<div class="card abstract">
+  <strong>Abstract.</strong>
+  Can a page's prior 28-day search and engagement signals flag which pages are likely to decline
+  over the <em>next</em> 28 days, well enough to beat a transparent hand-built rule? Using
+  FlyRank's production search warehouse (March 2026, ~9.8M daily rows, 331K content items,
+  client-grouped validation), a Logistic Regression trained on seven prior-window features
+  achieved a mean precision@50 of <strong>0.712 (±0.125)</strong> across five client-grouped
+  splits — clearly ahead of a hand-built CTR-vs-position rule's <strong>0.456 (±0.206)</strong>,
+  which itself performed below the observed base rate (0.516). This is a decision-support ranking
+  output for a weekly, human-reviewed content review queue — not a causal or general claim, and
+  not validated beyond the one month and client set tested here.
+</div>
+
+<h2>Introduction</h2>
+<p>
+  A FlyRank content lead managing a large multi-client page inventory can't manually review every
+  page every week. Today, the only readily available signal is a snapshot comparison — is a page's
+  last 30 days below its previous 30 days — which describes where a page already stands, not where
+  it's heading. By the time that flag appears, a page has often already been losing ground for a
+  while.
+</p>
+<p>
+  This project asks a narrower, checkable question: using only signals available <em>before</em> a
+  fixed decision point, can a model produce a short, ranked, reason-coded review list that
+  genuinely outperforms both random prioritization and a transparent hand-built rule — measured on
+  data the model never saw during training?
+</p>
+
+<h2>Data</h2>
+<p>
+  Source: the FlyRank ML Internship warehouse release, <code>fact_content_daily_performance</code>
+  (daily grain, partitioned by month, Jan 2025–June 2026) joined to <code>dim_content</code> and
+  <code>dim_clients</code>. Development window: the mid-panel month <strong>March 2026</strong> —
+  9,841,378 rows, 331,437 distinct content items, 55 clients active that month. The panel's final
+  month (June 2026) was deliberately never opened — it remains a sealed, untouched holdout for
+  future work.
+</p>
+<p><strong>Deliberately excluded, and why:</strong></p>
+<ul>
+  <li><code>trend_direction</code> / <code>trend_pct</code> — confirmed (correlation ≈ 1.0) to be
+    a same-window snapshot comparison, not a forward-looking outcome. Used only as a baseline
+    reference, never as a model feature.</li>
+  <li>FlyRank's own product-decision fields (health score, priority score, refresh flags) — never
+    pulled into this project, to avoid the model simply learning to copy an existing decision.</li>
+  <li><code>days_since_update</code> — knowable for only ~12% of rows at the decision date used
+    (the rest reflect an update timestamp <em>after</em> the decision date), and reversed direction
+    on that thin slice. Excluded on evidence, not assumption.</li>
+</ul>
+<div class="callout">
+  All identifiers used (<code>content_hash_id</code>, <code>client_hash_id</code>) are
+  pseudonymous hashes provided by the release itself — used only for joins and grouped-split
+  boundaries, never as model features, and never resolved to a real name anywhere in this project.
+</div>
+
+<h2>Methodology</h2>
+<p>
+  <strong>Label (proxy, stated plainly):</strong> <code>declined_next_28d</code> — 1 if a page's
+  total search impressions over the 28 days <em>after</em> the decision date are lower than the 28
+  days before it, 0 otherwise. A genuine forward-window comparison, with an enforced gap between
+  the feature window and the label window.
+</p>
+<p>
+  <strong>Features</strong> (all knowable strictly before the decision date): prior 28-day
+  impressions, clicks, click-through rate, average search position, sessions, a GA4-coverage flag,
+  and content age.
+</p>
+<p>
+  <strong>Baseline:</strong> a transparent rule — flag a page if it's visible and ranking well
+  (position 1–20, ≥100 prior impressions) but has low click-through (&lt;2%). Built only after
+  testing its assumptions directly: a staleness-based gate was tried first and found the
+  <strong>opposite</strong> of the assumption behind FlyRank's own refresh flags (decline rate fell,
+  not rose, with page age, on the minority of rows where staleness was even knowable at decision
+  time) — so it was dropped before shipping, rather than kept on a disproven premise.
+</p>
+<p>
+  <strong>Model:</strong> Logistic Regression — the task is a yes/no outcome with an observed
+  label, evaluated by ranking, which is the direct case for this method. A Random Forest was
+  trained on the identical split specifically to test whether added complexity earned its keep.
+</p>
+<p>
+  <strong>Validation:</strong> a client-grouped split — every page from one client stays entirely
+  in train or entirely in test, never both — reported as mean ± std across five different grouped
+  splits, after directly observing that a single split is unreliable (test-set base rate swung
+  from 0.387 to 0.631 across seeds, with only 9 clients per test fold).
+</p>
+<p>
+  <strong>Leakage checks:</strong> a deliberate trap (one future-window column added on purpose,
+  score jumped from 0.819 to a suspicious 1.000 ROC-AUC, then removed); a timeline check confirming
+  zero overlap between feature and label windows; a formal train-with/train-without test on the one
+  feature whose importance looked disproportionate; and a before/after check isolating a real
+  +0.064 precision@50 gap attributable to client-level memorization in a naive random split.
+</p>
+<figure>
+  <img src="img/leakage_trap_auc.png" alt="Bar chart showing ROC-AUC of 0.819 for the honest model versus 1.000 for the model with a deliberately leaked future-window feature">
+  <figcaption>The leakage trap: one future-window column, added on purpose and then removed. A jump this large is a red flag, not a win.</figcaption>
+</figure>
+
+<h2>Results</h2>
+<p>
+  All numbers below: client-grouped validation, mean ± std across 5 splits, same features, same
+  label, same evaluation code path for every method.
+</p>
+<table>
+  <tr><th>Method</th><th>Base rate</th><th>Precision@50</th><th>Precision@200</th></tr>
+  <tr><td>Week-4 hand-built rule</td><td>0.516 ± 0.104</td><td>0.456 ± 0.206</td><td>0.454 ± 0.200</td></tr>
+  <tr><td>Random Forest</td><td>0.516 ± 0.104</td><td>0.676 ± 0.155</td><td>0.617 ± 0.128</td></tr>
+  <tr class="highlight"><td>Logistic Regression</td><td>0.516 ± 0.104</td><td>0.712 ± 0.125</td><td>0.674 ± 0.147</td></tr>
+</table>
+<figure>
+  <img src="img/model_vs_baseline_precision.png" alt="Grouped bar chart comparing precision at 50 and precision at 200 for the Week-4 rule, Random Forest, and Logistic Regression, with a base rate reference line">
+  <figcaption>Logistic Regression beats the hand-built rule at both K, consistently across splits. Random Forest does not clearly beat Logistic Regression.</figcaption>
+</figure>
+<p>
+  The hand-built rule averaged <em>below</em> the observed base rate — its CTR-vs-position signal
+  held up in an isolated check but did not survive being turned into a combined ranking rule.
+  Random Forest did not clearly outperform Logistic Regression (lower mean, higher variance) —
+  added complexity was tested directly and did not earn its keep.
+</p>
+<div class="callout">
+  A caveat visible only by checking absolute discrimination, not just top-of-list ranking:
+  ROC-AUC for the deployed feature set sits around 0.56–0.59 — modest, barely above chance for
+  judging any single random page — even though the same model ranks its own top 50 well. This is a
+  tool for building a short, prioritized review list, not for expressing confidence about any one
+  page in isolation.
+</div>
+<p>
+  Several top-ranked pages in the actual queue showed click-through at or near 0.00% on tens or
+  hundreds of thousands of impressions — plausible as a real content problem, but equally
+  consistent with a broken tracking pixel, and flagged for a human Search Console check before
+  acting.
+</p>
+
+<h2>Interpretation</h2>
+<p>
+  Logistic Regression's largest standardized coefficients were prior clicks (-0.51), prior
+  sessions (+0.28), and prior impressions (+0.25) — volume and engagement signals dominate, not
+  click-through rate alone (CTR's coefficient was the smallest of the seven), despite CTR being
+  the one signal that survived an earlier isolated check. Random Forest's importance instead leaned
+  heavily on content age — a direct train-with/train-without test confirmed this is a real but
+  modest signal, and cross-checking against client-level averages suggests it functions more as a
+  <em>between-client cohort pattern</em> (older client portfolios decline more, on average) than a
+  clean per-page decay clock. Worth stating as a genuine, if slightly humbling, finding: the signal
+  that looked strongest in isolation did not end up as the dominant driver of the model that
+  actually won.
+</p>
+
+<h2>Limitations</h2>
+<ul>
+  <li><strong>One month, one panel slice.</strong> Validated on March 2026 → its following 28 days
+    only; not checked against seasonality, which the wider dataset shows can be substantial.</li>
+  <li><strong>Thin, uneven client coverage.</strong> ~43–55 clients depending on exact slice; GA4
+    tracking coverage in the raw daily data is only ~4.2% of rows.</li>
+  <li><strong>Small-test-fold volatility.</strong> With only 9 clients per grouped test fold,
+    single-split numbers swing substantially — every number here is a mean ± std for exactly this
+    reason.</li>
+  <li><strong>Not causal.</strong> A reason-code flag describes a correlated pattern in this data;
+    it is not evidence that a given fix causes recovery. No experiment was run.</li>
+  <li><strong>Content age is a partial client-cohort proxy</strong>, not a clean per-page decay
+    clock.</li>
+  <li><strong>Never validated against the sealed June 2026 holdout</strong>, by design — reserved
+    as a genuine unseen check for future work.</li>
+</ul>
+
+<h2>Ranked Recommendations</h2>
+<p>Reason codes and mapped actions, from the held-out test-client scoring run:</p>
+<table>
+  <tr><th>Reason code</th><th>Share</th><th>Action</th></tr>
+  <tr><td><code>weak_position</code></td><td>46.1%</td><td>Deprioritize unless business-critical; consider consolidation</td></tr>
+  <tr><td><code>declining_volume</code></td><td>45.4%</td><td>Flag for content refresh (add depth, update examples)</td></tr>
+  <tr><td><code>low_engagement</code></td><td>5.8%</td><td>Expand page depth; check for a better-matching competitor page</td></tr>
+  <tr><td><code>established_cohort_risk</code></td><td>2.5%</td><td>Route to a portfolio-level review, not a single-page edit</td></tr>
+  <tr><td><code>low_ctr_well_ranked</code></td><td>0.2%</td><td>Rewrite title/meta description; check search-intent match</td></tr>
+</table>
+<figure>
+  <img src="img/w07_reason_code_distribution.png" alt="Horizontal bar chart of the ranked action queue broken down by reason code">
+  <figcaption>The ranked queue by reason code — weak position and declining volume dominate.</figcaption>
+</figure>
+
+<h3>Human review, required</h3>
+<ul>
+  <li>Near-zero CTR with very high impressions could be broken tracking, not real disinterest —
+    verify in Search Console before treating it as a content problem.</li>
+  <li>An <code>established_cohort_risk</code> flag describes a client-level pattern, not a
+    page-level defect — route to a portfolio conversation, don't edit the single page in
+    isolation.</li>
+  <li>A page's recorded update date reflects only the <em>latest</em> update on file — a
+    recently-touched page can carry a stale reason code.</li>
+</ul>
+
+<h3 class="no-go">What should never be automated from this playbook</h3>
+<div class="callout warn">
+  <ul class="no-go">
+    <li>No auto-publishing or auto-editing content based on a score or reason code alone.</li>
+    <li>No client-facing reporting or billing decisions driven directly by this score.</li>
+    <li>No treating a decline flag as a performance judgment of a writer or team.</li>
+    <li>No feeding this score back into FlyRank's own product flags without disclosing it's a
+      research artifact, not a validated production signal.</li>
+    <li>No applying this queue to a client, month, or content type outside what was validated here
+      without re-checking it holds.</li>
+  </ul>
+</div>
+
+<h3>Monitoring / retrain triggers</h3>
+<table>
+  <tr><th>Trigger</th><th>Rough threshold</th></tr>
+  <tr><td>Precision@50 on a fresh month drops toward the base rate</td><td>Within ~0.05 of base rate</td></tr>
+  <tr><td>Precision@50 drops below the hand-built rule's number</td><td>Below 0.456</td></tr>
+  <tr><td>Test-set base rate shifts far outside the historical range</td><td>Outside 0.25–0.63</td></tr>
+  <tr><td>GA4 coverage changes sharply from baseline</td><td>±5 points</td></tr>
+  <tr><td>Client mix changes (new/departed clients)</td><td>Any material change</td></tr>
+</table>
+
+<h2>Reproducibility</h2>
+<p>
+  Repo: <a href="https://github.com/ZainabFatima-hzf/ML-flyRank">github.com/ZainabFatima-hzf/ML-flyRank</a>
+  — notebooks under <code>work/notebooks/</code> (<code>w01</code> through <code>w07</code>, plus
+  <code>capstone.ipynb</code>). Random seed for grouped-split evaluation: <code>42</code>
+  (primary), cross-checked against seeds <code>0, 1, 2, 99</code> for stability.
+</p>
+<div class="repro">pip install duckdb huggingface_hub scikit-learn pandas matplotlib
+# Requires a free, instant-approval HF_TOKEN for the gated dataset
+# (FlyRank/internship-warehouse on Hugging Face), stored as a Colab secret --
+# never committed to the repo.
+</div>
+<p>
+  The sealed June 2026 holdout month was never opened during this project; a sealed-evaluation
+  pass is flagged as future work, not claimed as already done.
+</p>
+
+<footer>
+  <p><strong>Acknowledgments &amp; data credit.</strong> Built on the FlyRank ML Internship
+  dataset — <a href="https://flyrank.ai">flyrank.ai</a>.</p>
+</footer>
+
+</div>
+</body>
+</html>
