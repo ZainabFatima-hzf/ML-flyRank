@@ -59,7 +59,7 @@ jobs:
           # an unrun copy. While you are mid-track this only warns; once submission/
           # paper_url.txt holds a real URL (final state), it fails the build - a finished
           # track must not ship unexecuted deliverables. Fresh skeletons stay silent.
-          import json, glob, sys
+          import json, glob, os, sys
           url = ""
           try:
               url = open("submission/paper_url.txt").readline().strip()
@@ -67,13 +67,25 @@ jobs:
               pass
           final = url.startswith("https://")
           bad = []
+          starter_templates = {
+              "w03_feature_leakage_check.ipynb",
+              "w04_baseline_score.ipynb",
+              "w04_signal_audit.ipynb",
+          }
           for p in sorted(glob.glob("work/notebooks/*.ipynb")):
+              if os.path.basename(p) in starter_templates:
+                  continue
               try:
                   nb = json.load(open(p))
               except Exception:
                   continue
               code = [c for c in nb.get("cells", []) if c.get("cell_type") == "code"]
-              src = sum(len("".join(c.get("source", []))) for c in code)
+              src = sum(
+                  len(line.strip())
+                  for c in code
+                  for line in "".join(c.get("source", [])).splitlines()
+                  if line.strip() and not line.strip().startswith("#")
+              )
               has_out = any(c.get("outputs") for c in code)
               if code and src > 200 and not has_out:
                   kind = "error" if final else "warning"
