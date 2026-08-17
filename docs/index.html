@@ -156,8 +156,10 @@
 
 <div class="card abstract">
   <strong>Abstract.</strong>
-  Can a page's prior 28-day search and engagement signals flag which pages are likely to decline
-  over the <em>next</em> 28 days, well enough to beat a transparent hand-built rule? Using
+  A content lead managing thousands of pages across many clients can only properly review a
+  fraction of them each week — so which fraction? Can a page's prior 28-day search and engagement
+  signals flag which pages are likely to decline over the <em>next</em> 28 days, well enough to
+  beat a transparent hand-built rule and give that lead a genuinely useful shortlist? Using
   FlyRank's production search warehouse (March 2026, ~9.8M daily rows, 331K content items,
   client-grouped validation), a Logistic Regression trained on seven prior-window features
   achieved a mean precision@50 of <strong>0.712 (±0.125)</strong> across five client-grouped
@@ -169,17 +171,23 @@
 
 <h2>Introduction</h2>
 <p>
-  A FlyRank content lead managing a large multi-client page inventory can't manually review every
-  page every week. Today, the only readily available signal is a snapshot comparison — is a page's
-  last 30 days below its previous 30 days — which describes where a page already stands, not where
-  it's heading. By the time that flag appears, a page has often already been losing ground for a
-  while.
+  Picture a FlyRank content lead on a Monday morning, responsible for a multi-client portfolio of
+  several thousand pages. They have time to properly review perhaps 50-200 pages this week — the
+  rest will simply not get looked at. Today, the only readily available signal for choosing which
+  50-200 is a snapshot comparison: is a page's last 30 days below its previous 30 days. That flag
+  describes where a page already stands, not where it's heading — by the time it fires, a page has
+  often already been losing ground for a while, and the flag itself doesn't say which of the
+  hundreds of currently-flagged pages is most worth the visit today.
 </p>
 <p>
-  This project asks a narrower, checkable question: using only signals available <em>before</em> a
-  fixed decision point, can a model produce a short, ranked, reason-coded review list that
-  genuinely outperforms both random prioritization and a transparent hand-built rule — measured on
-  data the model never saw during training?
+  This is the real, concrete problem this project set out to solve: not "predict SEO performance"
+  in the abstract, but answer one narrow, checkable question for that Monday-morning content lead —
+  using only signals available <em>before</em> a fixed decision point, can a model produce a short,
+  ranked, reason-coded shortlist that genuinely outperforms both random prioritization and a
+  transparent hand-built rule (the kind of rule FlyRank's own refresh and CTR-fix flags already
+  use), measured on data the model never saw during training? Everything that follows —
+  the baseline, the model, the leakage checks, the ranked recommendations — exists in service of
+  answering that one question for that one person.
 </p>
 
 <h2>Data</h2>
